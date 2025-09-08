@@ -16,6 +16,7 @@ The bootcamp aims to provide participants with a practical understanding of Larg
 1. ✅ Recommended Platform: [Google Colab](https://colab.research.google.com/): Colab provides a free, GPU-enabled environment—ideal for this bootcamp. 
 2. 🤗 HuggingFace account: Create a free account at [Hugging Face](https://huggingface.co/join) to access pre-trained models and datasets.
 3. 🤗 HuggingFace API token: After creating your account, obtain your API token from the [Hugging Face website](https://huggingface.co/settings/tokens).
+4. Getting access to Llama (optional): If you wish to test out the capabilities of Meta's LLaMA model, you can request access through the [official form](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct). Getting approved for access might take some time, so please **request it in ADVANCE**.
 
 **Important to note** 
 - Most of the models we'll be using are quite large and require significant computational resources.
