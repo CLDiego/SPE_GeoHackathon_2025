@@ -1,3 +1,5 @@
+![Workshop Banner](assets/banner.png)
+
 # SPE GeoHackathon 2025 – Bootcamp on LLMs and RAG for Geosciences
 
 ## Overview
