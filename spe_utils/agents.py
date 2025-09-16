@@ -168,35 +168,46 @@ def _extract_sql(
     return sql + ";"
 
 
+async def _webpage_to_pdf_async(url: str, out_pdf: Path, inject_mathjax: bool, wait_ms: int) -> Path:
+    from playwright.async_api import async_playwright
+
+    MATHJAX_CDN = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_page()
+        await page.goto(url, wait_until="domcontentloaded")
+        if inject_mathjax:
+            js_check = """() => Boolean(window.MathJax) || Boolean(document.querySelector('[class*="katex"], [id*="katex"]'))"""
+            has_math_lib = await page.evaluate(js_check)
+            if not has_math_lib:
+                await page.add_script_tag(url=MATHJAX_CDN)
+        await page.wait_for_timeout(wait_ms)
+        await page.emulate_media(media="screen")
+        await page.pdf(path=str(out_pdf), format="A4", print_background=True)
+        await browser.close()
+    return out_pdf
+
+
 def webpage_to_pdf(url: str, out_pdf: Path, inject_mathjax: bool = True, wait_ms: int = 1500) -> Path:
     """
     Render a webpage (including LaTeX/KaTeX) to a PDF.
 
-    - Uses Playwright headless Chromium for accurate rendering.
-    - Optionally injects MathJax if the page lacks KaTeX/MathJax to render formulas.
-    - Waits briefly for network/rendering to settle before printing to PDF.
+    Works in notebooks by using Playwright's async API and nest_asyncio when a loop is running.
     """
     out_pdf.parent.mkdir(parents=True, exist_ok=True)
+    import asyncio
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = None
 
-    from playwright.sync_api import sync_playwright
-
-    MATHJAX_CDN = (
-        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    )
-
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page()
-        page.goto(url, wait_until="domcontentloaded")
-
-        if inject_mathjax:
-            js_check = """() => !!(window.MathJax || document.querySelector('[class*="katex"], [id*="katex"]'))"""
-            has_math_lib = page.evaluate(js_check)
-            if not has_math_lib:
-                page.add_script_tag(url=MATHJAX_CDN)
-        # Give time for math/rendering
-        page.wait_for_timeout(wait_ms)
-        # Prefer A4; background for code/figures
-        page.pdf(path=str(out_pdf), format="A4", print_background=True)
-        browser.close()
-    return out_pdf
+    if loop and loop.is_running():
+        try:
+            import nest_asyncio  # type: ignore
+            nest_asyncio.apply()
+        except Exception:
+            pass
+        return loop.run_until_complete(_webpage_to_pdf_async(url, out_pdf, inject_mathjax, wait_ms))
+    else:
+        return asyncio.run(_webpage_to_pdf_async(url, out_pdf, inject_mathjax, wait_ms))
