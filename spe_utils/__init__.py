@@ -52,6 +52,7 @@ try:
         ensure_sample_csv,
         _find_closest_match,
         _extract_sql,
+        webpage_to_pdf,
     )
     __all__.extend([
         'ensure_json_dataset',
@@ -60,6 +61,7 @@ try:
         'ensure_sample_csv',
         '_find_closest_match',
         '_extract_sql',
+        'webpage_to_pdf',
     ])
 except ImportError:
     # agents may depend on optional deps; ignore import error at package load time

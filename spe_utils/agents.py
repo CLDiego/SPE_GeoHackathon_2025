@@ -14,6 +14,7 @@ __all__ = [
     "ensure_sample_csv",
     "_find_closest_match",
     "_extract_sql",
+    "webpage_to_pdf",
 ]
 
 
@@ -165,3 +166,37 @@ def _extract_sql(
             sql = re.sub(r"'([^']+)'", replace_literal, sql)
 
     return sql + ";"
+
+
+def webpage_to_pdf(url: str, out_pdf: Path, inject_mathjax: bool = True, wait_ms: int = 1500) -> Path:
+    """
+    Render a webpage (including LaTeX/KaTeX) to a PDF.
+
+    - Uses Playwright headless Chromium for accurate rendering.
+    - Optionally injects MathJax if the page lacks KaTeX/MathJax to render formulas.
+    - Waits briefly for network/rendering to settle before printing to PDF.
+    """
+    out_pdf.parent.mkdir(parents=True, exist_ok=True)
+
+    from playwright.sync_api import sync_playwright
+
+    MATHJAX_CDN = (
+        "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    )
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page()
+        page.goto(url, wait_until="domcontentloaded")
+
+        if inject_mathjax:
+            js_check = """() => !!(window.MathJax || document.querySelector('[class*="katex"], [id*="katex"]'))"""
+            has_math_lib = page.evaluate(js_check)
+            if not has_math_lib:
+                page.add_script_tag(url=MATHJAX_CDN)
+        # Give time for math/rendering
+        page.wait_for_timeout(wait_ms)
+        # Prefer A4; background for code/figures
+        page.pdf(path=str(out_pdf), format="A4", print_background=True)
+        browser.close()
+    return out_pdf
