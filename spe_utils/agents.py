@@ -199,29 +199,29 @@ async def _webpage_to_pdf_async(url: str, out_pdf: Path, inject_mathjax: bool, w
         browser = await p.chromium.launch()
         page = await browser.new_page()
         await page.goto(url, wait_until="domcontentloaded")
-                # Replace common math images (e.g., Wikipedia SVG fallbacks) with TeX text so MathJax can typeset
-                replace_math_imgs_js = """
-                () => {
-                    const imgs = Array.from(document.querySelectorAll('img[alt], img[data-tex], img.mwe-math-fallback-image-inline'));
-                    imgs.forEach((img) => {
-                        const alt = img.getAttribute('data-tex') || img.getAttribute('alt') || '';
-                        if (alt && alt.trim().length > 0) {
-                            const span = document.createElement('span');
-                            span.textContent = `\\(${alt}\\)`; // inline TeX for MathJax
-                            img.replaceWith(span);
-                        }
-                    });
+        # Replace common math images (e.g., Wikipedia SVG fallbacks) with TeX text so MathJax can typeset
+        replace_math_imgs_js = """
+        () => {
+            const imgs = Array.from(document.querySelectorAll('img[alt], img[data-tex], img.mwe-math-fallback-image-inline'));
+            imgs.forEach((img) => {
+                const alt = img.getAttribute('data-tex') || img.getAttribute('alt') || '';
+                if (alt && alt.trim().length > 0) {
+                    const span = document.createElement('span');
+                    span.textContent = `\\(${alt}\\)`; // inline TeX for MathJax
+                    img.replaceWith(span);
                 }
-                """
-                await page.evaluate(replace_math_imgs_js)
+            });
+        }
+        """
+        await page.evaluate(replace_math_imgs_js)
         if inject_mathjax:
             js_check = """() => Boolean(window.MathJax) || Boolean(document.querySelector('[class*="katex"], [id*="katex"]'))"""
             has_math_lib = await page.evaluate(js_check)
             if not has_math_lib:
                 await page.add_script_tag(url=MATHJAX_CDN)
-                        # Typeset after injection
-                        await page.wait_for_timeout(300)
-                        await page.evaluate("""() => (window.MathJax && window.MathJax.typesetPromise) ? window.MathJax.typesetPromise() : null""")
+                # Typeset after injection
+                await page.wait_for_timeout(300)
+                await page.evaluate("""() => (window.MathJax && window.MathJax.typesetPromise) ? window.MathJax.typesetPromise() : null""")
         await page.wait_for_timeout(wait_ms)
         await page.emulate_media(media="screen")
         await page.pdf(path=str(out_pdf), format="A4", print_background=True)
