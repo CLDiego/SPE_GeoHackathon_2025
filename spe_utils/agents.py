@@ -15,6 +15,7 @@ __all__ = [
     "_find_closest_match",
     "_extract_sql",
     "webpage_to_pdf",
+    "pdf_to_markdown",
 ]
 
 
@@ -62,24 +63,45 @@ def load_json_docs(json_path: Path) -> List[Any]:
     return docs
 
 
+def pdf_to_markdown(pdf_path: Path) -> str:
+    """Convert a PDF to Markdown text.
+
+    Tries pymupdf4llm first; falls back to plain PyMuPDF text extraction.
+    """
+    try:
+        import pymupdf4llm  # type: ignore
+        return pymupdf4llm.to_markdown(str(pdf_path))
+    except Exception:
+        try:
+            import fitz  # PyMuPDF
+            doc = fitz.open(str(pdf_path))
+            pages = []
+            for page in doc:
+                pages.append(page.get_text("text"))
+            doc.close()
+            return "\n\n".join(pages)
+        except Exception as e:
+            raise RuntimeError(f"PDF to markdown failed for {pdf_path}: {e}")
+
+
 def load_pdf_docs(pdf_dir: Path) -> List[Any]:
     pdfs = sorted(pdf_dir.rglob("*.pdf"))
     out: List[Any] = []
+    try:
+        from langchain_core.documents import Document  # type: ignore
+    except Exception:
+        Document = dict  # type: ignore
+
     for p in pdfs:
         try:
-            # Lazy import to avoid requiring langchain at package import time
-            from langchain_community.document_loaders import PyPDFLoader  # type: ignore
-            loader = PyPDFLoader(str(p))
-            pages = loader.load()
-            for d in pages:
-                d.metadata = {
-                    **(d.metadata or {}),
-                    "title": d.metadata.get("title") or p.stem,
-                    "file_path": str(p),
-                }
-            out.extend(pages)
+            md = pdf_to_markdown(p)
+            meta = {"title": p.stem, "file_path": str(p), "format": "markdown"}
+            try:
+                out.append(Document(page_content=md, metadata=meta))
+            except TypeError:
+                out.append({"page_content": md, "metadata": meta})
         except Exception as e:
-            print(f"Failed to load PDF {p}: {e}")
+            print(f"Failed to convert PDF {p} to markdown: {e}")
     return out
 
 
@@ -177,11 +199,29 @@ async def _webpage_to_pdf_async(url: str, out_pdf: Path, inject_mathjax: bool, w
         browser = await p.chromium.launch()
         page = await browser.new_page()
         await page.goto(url, wait_until="domcontentloaded")
+                # Replace common math images (e.g., Wikipedia SVG fallbacks) with TeX text so MathJax can typeset
+                replace_math_imgs_js = """
+                () => {
+                    const imgs = Array.from(document.querySelectorAll('img[alt], img[data-tex], img.mwe-math-fallback-image-inline'));
+                    imgs.forEach((img) => {
+                        const alt = img.getAttribute('data-tex') || img.getAttribute('alt') || '';
+                        if (alt && alt.trim().length > 0) {
+                            const span = document.createElement('span');
+                            span.textContent = `\\(${alt}\\)`; // inline TeX for MathJax
+                            img.replaceWith(span);
+                        }
+                    });
+                }
+                """
+                await page.evaluate(replace_math_imgs_js)
         if inject_mathjax:
             js_check = """() => Boolean(window.MathJax) || Boolean(document.querySelector('[class*="katex"], [id*="katex"]'))"""
             has_math_lib = await page.evaluate(js_check)
             if not has_math_lib:
                 await page.add_script_tag(url=MATHJAX_CDN)
+                        # Typeset after injection
+                        await page.wait_for_timeout(300)
+                        await page.evaluate("""() => (window.MathJax && window.MathJax.typesetPromise) ? window.MathJax.typesetPromise() : null""")
         await page.wait_for_timeout(wait_ms)
         await page.emulate_media(media="screen")
         await page.pdf(path=str(out_pdf), format="A4", print_background=True)

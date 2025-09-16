@@ -53,6 +53,7 @@ try:
         _find_closest_match,
         _extract_sql,
         webpage_to_pdf,
+        pdf_to_markdown,
     )
     __all__.extend([
         'ensure_json_dataset',
@@ -62,6 +63,7 @@ try:
         '_find_closest_match',
         '_extract_sql',
         'webpage_to_pdf',
+        'pdf_to_markdown',
     ])
 except ImportError:
     # agents may depend on optional deps; ignore import error at package load time
