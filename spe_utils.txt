@@ -5,3 +5,4 @@ https://raw.githubusercontent.com/CLDiego/SPE_GeoHackathon_2025/refs/heads/dev/s
 https://raw.githubusercontent.com/CLDiego/SPE_GeoHackathon_2025/refs/heads/dev/spe_utils/visualisation/__init__.py
 https://raw.githubusercontent.com/CLDiego/SPE_GeoHackathon_2025/refs/heads/dev/spe_utils/data/__init__.py
 https://raw.githubusercontent.com/CLDiego/SPE_GeoHackathon_2025/refs/heads/dev/spe_utils/data/texts.py
+https://raw.githubusercontent.com/CLDiego/SPE_GeoHackathon_2025/refs/heads/dev/spe_utils/agents.py

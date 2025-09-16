@@ -13,8 +13,8 @@ The package automatically imports all submodules and their public members.
 import importlib
 import pkgutil
 
-# Import version
 from .__version__ import __version__
+from .core import find_project_root
 
 def import_all_modules(package_name):
     """Automatically import all modules and their public members."""
@@ -42,6 +42,28 @@ for module in modules.values():
     else:
         __all__.extend([name for name in dir(module)
                        if not name.startswith('_')])
+
+# Also expose selected helpers at package top-level for convenience
+try:
+    from .agents import (
+        ensure_json_dataset,
+        load_json_docs,
+        load_pdf_docs,
+        ensure_sample_csv,
+        _find_closest_match,
+        _extract_sql,
+    )
+    __all__.extend([
+        'ensure_json_dataset',
+        'load_json_docs',
+        'load_pdf_docs',
+        'ensure_sample_csv',
+        '_find_closest_match',
+        '_extract_sql',
+    ])
+except ImportError:
+    # agents may depend on optional deps; ignore import error at package load time
+    pass
 
 # Remove duplicates while preserving order
 __all__ = list(dict.fromkeys(__all__))
