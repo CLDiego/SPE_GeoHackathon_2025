@@ -121,7 +121,7 @@ pip install transformers langchain gradio faiss-cpu chromadb sentence-transforme
 | S1 M2 | Orchestration | LangChain primitives: LLM wrappers, tools, chains, memory |
 | S1 M3 | Interactive UI | Gradio agent interfaces, tool calling, safe execution |
 | S2 M1 | RAG | Chunking, embeddings, vector store, retrieval eval |
-| S2 M2 | Advanced Agents | Multi-step planning, guarded tools, evaluation heuristics |
+| S2 M2 | Advanced Agents | Multi-step planning, guarded tools |
 
 ---
 
