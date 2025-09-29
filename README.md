@@ -55,22 +55,24 @@ Each notebook can be launched directly in Google Colab (recommended) using the b
 4. 🦙 (Optional) Request access to gated models (e.g. Meta Llama, Mistral-medium, etc.) well before the workshop
 5. 🔍 (Optional) Explore embedding model cards to compare dimensions vs cost (e.g. `sentence-transformers/all-MiniLM-L6-v2` vs `BAAI/bge-large-en-v1.5`)
 
-### Setting Your Hugging Face Token in Notebooks
-In Colab run:
+### Setting Your Hugging Face Token in Google Colab
+The recommended way to use your Hugging Face token in Colab is with the built-in **Secrets manager**. This keeps your token secure and avoids saving it directly in your notebook.
+
+1. In your Colab notebook, click the **key icon** (🔑) in the left sidebar to open the "Secrets" tab.
+2. Click **"Add a new secret"**.
+3. For the **Name**, enter `HF_TOKEN`.
+4. In the **Value** field, paste your Hugging Face token (it should start with `hf_`).
+5. Make sure the toggle switch is on to grant notebook access to this secret.
+
+Then, run the following code cell at the beginning of your notebook to load the token into your environment:
+
 ```python
+from google.colab import userdata
 import os
-os.environ["HF_TOKEN"] = "hf_................................"
-```
-Or use the secure UI prompt:
-```python
-from getpass import getpass
-import os
-os.environ['HF_TOKEN'] = getpass('Enter your HF token: ')
-```
-Transformers / LangChain (HuggingFaceHub integration) will also look for:
-```python
-import os
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.environ.get("HF_TOKEN", "")
+
+# Load the secret and set it as an environment variable
+HF_TOKEN = userdata.get('HF_TOKEN')
+os.environ['HF_TOKEN'] = HF_TOKEN
 ```
 
 ### Using Gated Models
