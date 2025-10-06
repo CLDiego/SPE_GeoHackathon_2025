@@ -1,2 +1,5 @@
 /00_setup.ipynb
+*.DS_Store
+*.pptx
 *__pycache__/
+.DS_Store
