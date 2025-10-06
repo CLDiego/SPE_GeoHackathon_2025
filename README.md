@@ -37,12 +37,12 @@ Each notebook can be launched directly in Google Colab (recommended) using the b
 
 | Session | Notebook | Focus | Launch |
 |---------|----------|-------|--------|
-| S1 M1 | `S1_M1_LLM_HF.ipynb` | Intro to LLMs, HF inference, tokenization basics | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/dev/S1_M1_LLM_HF.ipynb) |
-| S1 M1 (Exercise) | `S1_M1_Exercise_Solution.ipynb` | Practice prompts & generation exercises (solutions) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/dev/S1_M1_Exercise_Solution.ipynb) |
-| S1 M2 | `S1_M2_LangChain.ipynb` | LangChain basics: chains, tools, memory | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/dev/S1_M2_LangChain.ipynb) |
-| S1 M3 | `S1_M3_GradioAgent.ipynb` | Gradio agent UI & tool calling | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/dev/S1_M3_GradioAgent.ipynb) |
-| S2 M1 | `S2_M1_RAG.ipynb` | Retrieval-Augmented Generation pipeline (embeddings, vector DB) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/dev/S2_M1_RAG.ipynb) |
-| S2 M2 | `S2_M2_Advanced_agents.ipynb` | Advanced agent patterns: multi-tool, guarded exec | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/dev/S2_M2_Advanced_agents.ipynb) |
+| S1 M1 | `S1_M1_LLM_HF.ipynb` | Intro to LLMs, HF inference, tokenization basics | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/main/S1_M1_LLM_HF.ipynb) |
+| S1 M1 (Exercise) | `S1_M1_Exercise_Solution.ipynb` | Practice prompts & generation exercises (solutions) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/main/S1_M1_Exercise_Solution.ipynb) |
+| S1 M2 | `S1_M2_LangChain.ipynb` | LangChain basics: chains, tools, memory | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/main/S1_M2_LangChain.ipynb) |
+| S1 M3 | `S1_M3_GradioAgent.ipynb` | Gradio agent UI & tool calling | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/main/S1_M3_GradioAgent.ipynb) |
+| S2 M1 | `S2_M1_RAG.ipynb` | Retrieval-Augmented Generation pipeline (embeddings, vector DB) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/main/S2_M1_RAG.ipynb) |
+| S2 M2 | `S2_M2_Advanced_agents.ipynb` | Advanced agent patterns: multi-tool, guarded exec | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CLDiego/SPE_GeoHackathon_2025/blob/main/S2_M2_Advanced_agents.ipynb) |
 
 > Tip: If you fork the repo, update the badge URLs to point to your fork/branch for a stable learning environment.
 
